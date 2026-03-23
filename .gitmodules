@@ -1,0 +1,3 @@
+[submodule "space_robotics_gz_envs"]
+	path = space_robotics_gz_envs
+	url = https://github.com/AndrejOrsula/space_robotics_gz_envs.git
