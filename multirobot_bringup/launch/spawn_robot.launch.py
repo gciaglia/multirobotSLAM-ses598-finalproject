@@ -1,4 +1,4 @@
-"""Spawn a single namespaced TurtleBot3 Waffle into Gazebo with ros_gz_bridge."""
+#Spawn a single TurtleBot3 Waffle into Gazebo with the ros_gz_bridge
 
 import os
 

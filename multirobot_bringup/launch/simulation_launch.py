@@ -1,5 +1,6 @@
-"""Launch Gazebo with a world file (supports both .sdf and .sdf.xacro)."""
+#Launch Gazebo with a world file, this is what is initially launched
 
+#imports
 import os
 import tempfile
 from pathlib import Path
@@ -16,8 +17,7 @@ from launch.actions import (
 from launch.event_handlers import OnShutdown
 from launch.substitutions import LaunchConfiguration
 
-
-# Find the repo root by walking up from this file until we find space_robotics_gz_envs
+# Find the mars environment, need to find the file since this gets copied into the ros2 install folder after being built.
 def _find_repo_root():
     path = Path(__file__).resolve()
     while path != path.parent:
@@ -33,9 +33,12 @@ _ASSETS_CACHE_DIR = os.path.join(_REPO_ROOT, 'space_robotics_gz_envs', 'assets',
 
 
 def generate_launch_description():
+    #this gets the models for the TB3 waffle, sandbox gazebo worlds.
     sim_dir = get_package_share_directory('nav2_minimal_tb3_sim')
+    #this is the lcoation of the mars world
     bringup_dir = get_package_share_directory('multirobot_bringup')
 
+    #create world variable
     world = LaunchConfiguration('world')
 
     declare_world_cmd = DeclareLaunchArgument(
@@ -44,14 +47,14 @@ def generate_launch_description():
         description='Full path to world SDF file (.sdf or .sdf.xacro)',
     )
 
-    # Nav2 TB3 models (needed for robot spawning)
+    # Location of models, Nav2 TB3 models (needed for robot spawning)
     set_env_nav2_models = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(sim_dir, 'models'))
     set_env_nav2_parent = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH',
         str(Path(sim_dir).parent.resolve()))
 
-    # Procgen assets from space_robotics_gz_envs (martian_rock0, martian_surface0, etc.)
+    #mars model
     set_env_space_assets = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', _ASSETS_CACHE_DIR)
 
@@ -59,12 +62,12 @@ def generate_launch_description():
     set_env_bringup_worlds = AppendEnvironmentVariable(
         'GZ_SIM_RESOURCE_PATH', os.path.join(bringup_dir, 'worlds'))
 
-    # Process xacro to SDF (needed for .sdf.xacro worlds like tb3_sandbox)
+    # Process xacro to SDF for gazebo(like tb3_sandbox)
     world_sdf = tempfile.mktemp(prefix='multirobot_', suffix='.sdf')
     world_sdf_xacro = ExecuteProcess(
         cmd=['xacro', '-o', world_sdf, ['headless:=', 'False'], world])
 
-    # Start Gazebo server
+    # Start Gazebo
     start_gazebo_cmd = ExecuteProcess(
         cmd=['gz', 'sim', '-r', '-s', world_sdf],
         output='screen',
@@ -83,6 +86,7 @@ def generate_launch_description():
                            if os.path.exists(world_sdf) else None)
         ]))
 
+    #order of actions
     ld = LaunchDescription()
     ld.add_action(set_env_nav2_models)
     ld.add_action(set_env_nav2_parent)
