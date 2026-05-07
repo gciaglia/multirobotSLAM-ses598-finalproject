@@ -31,6 +31,11 @@ setup(
     },
     entry_points={
         'console_scripts': [
+            'map_merger = multirobot_bringup.map_merger:main',
+            'explore_controller = multirobot_bringup.explore_controller:main',
+            'frontier_detector = multirobot_bringup.frontier_detector:main',
+            'explorer = multirobot_bringup.explorer:main',
+            'metrics_logger = multirobot_bringup.metrics_logger:main',
         ],
     },
 )

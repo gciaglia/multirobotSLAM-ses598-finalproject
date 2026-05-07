@@ -1,0 +1,18 @@
+# Python bytecode cache
+__pycache__/
+*.pyc
+*.pyo
+
+# ROS2 / colcon build artifacts (defense-in-depth; workspace lives
+# outside this repo but accidental copies should still be ignored)
+build/
+install/
+log/
+
+# Editor / OS
+.DS_Store
+*.swp
+*.swo
+*~
+.idea/
+.vscode/

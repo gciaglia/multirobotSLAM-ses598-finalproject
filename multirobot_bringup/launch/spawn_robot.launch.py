@@ -50,6 +50,16 @@ def generate_launch_description():
         description='Full path to robot SDF xacro file',
     )
 
+    declare_bridge_config_cmd = DeclareLaunchArgument(
+        'bridge_config',
+        default_value=os.path.join(
+            sim_dir, 'configs', 'turtlebot3_waffle_bridge.yaml'),
+        description=(
+            'Bridge YAML for ros_gz_bridge. For multi-robot, use '
+            'multirobot_bringup/config/turtlebot3_waffle_bridge_no_clock.yaml '
+            'and run a single /clock bridge separately.'),
+    )
+
     # Gazebo-ROS bridge: bridges all sensor/cmd topics under the robot namespace.
     # With expand_gz_topic_names=True the bridge automatically maps
     # <namespace>/scan (Gz) -> <namespace>/scan (ROS), etc.
@@ -59,9 +69,7 @@ def generate_launch_description():
         namespace=namespace,
         parameters=[
             {
-                'config_file': os.path.join(
-                    sim_dir, 'configs', 'turtlebot3_waffle_bridge.yaml'
-                ),
+                'config_file': LaunchConfiguration('bridge_config'),
                 'expand_gz_topic_names': True,
                 'use_sim_time': True,
             }
@@ -106,6 +114,7 @@ def generate_launch_description():
     ld.add_action(declare_namespace_cmd)
     ld.add_action(declare_robot_name_cmd)
     ld.add_action(declare_robot_sdf_cmd)
+    ld.add_action(declare_bridge_config_cmd)
     ld.add_action(bridge)
     ld.add_action(spawn_model)
     ld.add_action(robot_state_pub)

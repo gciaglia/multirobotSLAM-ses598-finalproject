@@ -58,7 +58,12 @@ def generate_launch_description():
         name='slam_toolbox',
         output='screen',
         namespace= namespace,
-        remappings=[('/tf', 'tf'), ('/tf_static', 'tf_static')],
+        remappings=[
+            ('/tf', 'tf'),
+            ('/tf_static', 'tf_static'),
+            ('/map', 'map'),
+            ('/map_metadata', 'map_metadata'),
+        ],
 
     )
 
